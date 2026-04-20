@@ -38,6 +38,12 @@ yarn-error.*
 
 app-example
 
+# SQLite databases
+*.db
+
+# Build artifacts
+com.facebook.react.devsupport.BundleDownloader
+
 # generated native folders
 /ios
 /android

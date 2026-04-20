@@ -1,104 +1,46 @@
-import StudentCard from '@/components/StudentCard';
 import PrimaryButton from '@/components/ui/primary-button';
 import ScreenHeader from '@/components/ui/screen-header';
 import { useRouter } from 'expo-router';
-import { useContext, useState } from 'react';
-import {
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
+import { useContext } from 'react';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Student, StudentContext } from '../_layout';
+import { AppContext, Trip } from '../_layout';
 
 export default function IndexScreen() {
   const router = useRouter();
-  const context = useContext(StudentContext);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedYear, setSelectedYear] = useState('All');
+  const context = useContext(AppContext);
 
   if (!context) return null;
 
-  const { students } = context;
-  const normalizedQuery = searchQuery.trim().toLowerCase();
-  const yearOptions = [
-    'All',
-    ...Array.from(new Set(students.map((student: Student) => String(student.year)))).sort(
-      (a, b) => Number(a) - Number(b)
-    ),
-  ];
-
-  const filteredStudents = students.filter((student: Student) => {
-    const matchesSearch =
-      normalizedQuery.length === 0 ||
-      student.name.toLowerCase().includes(normalizedQuery) ||
-      student.major.toLowerCase().includes(normalizedQuery);
-
-    const matchesYear =
-      selectedYear === 'All' || String(student.year) === selectedYear;
-
-    return matchesSearch && matchesYear;
-  });
+  const { trips } = context;
 
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScreenHeader
-        title="Students"
-        subtitle={`${students.length} enrolled`}
+        title="My Trips"
+        subtitle={`${trips.length} trip${trips.length !== 1 ? 's' : ''}`}
       />
 
       <PrimaryButton
-        label="Add Student"
+        label="Add Trip"
         onPress={() => router.push({ pathname: '../add' })}
       />
-
-      <TextInput
-        value={searchQuery}
-        onChangeText={setSearchQuery}
-        placeholder="Search by name or major"
-        style={styles.searchInput}
-      />
-
-      <View style={styles.filterRow}>
-        {yearOptions.map((year) => {
-          const isSelected = selectedYear === year;
-
-          return (
-            <Pressable
-              key={year}
-              accessibilityLabel={`Filter by year ${year}`}
-              accessibilityRole="button"
-              onPress={() => setSelectedYear(year)}
-              style={[
-                styles.filterButton,
-                isSelected && styles.filterButtonSelected,
-              ]}
-            >
-              <Text
-                style={[
-                  styles.filterButtonText,
-                  isSelected && styles.filterButtonTextSelected,
-                ]}
-              >
-                {year}
-              </Text>
-            </Pressable>
-          );
-        })}
-      </View>
 
       <ScrollView
         contentContainerStyle={styles.listContent}
         showsVerticalScrollIndicator={false}
       >
-        {filteredStudents.length === 0 ? (
-          <Text style={styles.emptyText}>No students match your filters</Text>
+        {trips.length === 0 ? (
+          <Text style={styles.emptyText}>No trips yet. Add your first trip!</Text>
         ) : (
-          filteredStudents.map((student: Student) => (
-            <StudentCard key={student.id} student={student} />
+          trips.map((trip: Trip) => (
+            <View key={trip.id} style={styles.card}>
+              <Text style={styles.cardTitle}>{trip.name}</Text>
+              <Text style={styles.cardSubtitle}>{trip.destination}</Text>
+              <Text style={styles.cardDates}>
+                {trip.startDate} → {trip.endDate}
+              </Text>
+            </View>
           ))
         )}
       </ScrollView>
@@ -116,41 +58,29 @@ const styles = StyleSheet.create({
   listContent: {
     paddingBottom: 24,
     paddingTop: 14,
+    gap: 12,
   },
-  searchInput: {
+  card: {
     backgroundColor: '#FFFFFF',
-    borderColor: '#94A3B8',
-    borderRadius: 10,
+    borderRadius: 12,
     borderWidth: 1,
-    marginTop: 14,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
+    borderColor: '#E2E8F0',
+    padding: 16,
   },
-  filterRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-    marginTop: 10,
-  },
-  filterButton: {
-    backgroundColor: '#FFFFFF',
-    borderColor: '#94A3B8',
-    borderRadius: 999,
-    borderWidth: 1,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-  },
-  filterButtonSelected: {
-    backgroundColor: '#0F172A',
-    borderColor: '#0F172A',
-  },
-  filterButtonText: {
+  cardTitle: {
+    fontSize: 16,
+    fontWeight: '600',
     color: '#0F172A',
-    fontSize: 14,
-    fontWeight: '500',
   },
-  filterButtonTextSelected: {
-    color: '#FFFFFF',
+  cardSubtitle: {
+    fontSize: 14,
+    color: '#475569',
+    marginTop: 2,
+  },
+  cardDates: {
+    fontSize: 13,
+    color: '#94A3B8',
+    marginTop: 6,
   },
   emptyText: {
     color: '#475569',

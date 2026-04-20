@@ -1,4 +1,4 @@
-import { seedStudentsIfEmpty } from '../db/seed';
+import { seedIfEmpty } from '../db/seed';
 import { db } from '../db/client';
 
 jest.mock('../db/client', () => ({
@@ -10,36 +10,34 @@ jest.mock('../db/client', () => ({
 
 const mockDb = db as unknown as { select: jest.Mock; insert: jest.Mock };
 
-describe('seedStudentsIfEmpty', () => {
+describe('seedIfEmpty', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  it('inserts students when the table is empty', async () => {
-    const mockValues = jest.fn().mockResolvedValue(undefined);
+  it('inserts data into all tables when users table is empty', async () => {
+    const mockReturning = jest.fn().mockResolvedValue([{ id: 1, name: 'Demo User', email: 'demo@example.com', password: 'password123', createdAt: '2026-01-01' }]);
+    const mockValues = jest.fn().mockReturnValue({ returning: mockReturning });
     const mockFrom = jest.fn().mockResolvedValue([]);
+
     mockDb.select.mockReturnValue({ from: mockFrom });
     mockDb.insert.mockReturnValue({ values: mockValues });
 
-    await seedStudentsIfEmpty();
+    await seedIfEmpty();
 
     expect(mockDb.insert).toHaveBeenCalled();
     expect(mockValues).toHaveBeenCalledWith(
-      expect.arrayContaining([
-        expect.objectContaining({ name: 'Emilia' }),
-        expect.objectContaining({ name: 'Jackie' }),
-        expect.objectContaining({ name: 'Sammy' }),
-      ])
+      expect.objectContaining({ name: 'Demo User', email: 'demo@example.com' })
     );
   });
 
-  it('does nothing when students already exist', async () => {
+  it('does nothing when users already exist', async () => {
     const mockFrom = jest.fn().mockResolvedValue([
-      { id: 1, name: 'Existing', major: 'CS', year: '1', count: 0 },
+      { id: 1, name: 'Demo User', email: 'demo@example.com', password: 'password123', createdAt: '2026-01-01' },
     ]);
     mockDb.select.mockReturnValue({ from: mockFrom });
 
-    await seedStudentsIfEmpty();
+    await seedIfEmpty();
 
     expect(mockDb.insert).not.toHaveBeenCalled();
   });

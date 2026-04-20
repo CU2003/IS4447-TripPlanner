@@ -1,41 +1,44 @@
 import { Stack } from 'expo-router';
 import { createContext, useEffect, useState } from 'react';
 import { db } from '@/db/client';
-import { students as studentsTable } from '@/db/schema';
-import { seedStudentsIfEmpty } from '@/db/seed';
+import { trips as tripsTable } from '@/db/schema';
+import { seedIfEmpty } from '@/db/seed';
 
-export type Student = {
+export type Trip = {
   id: number;
   name: string;
-  major: string;
-  year: string;
-  count: number;
+  destination: string;
+  startDate: string;
+  endDate: string;
+  notes: string | null;
+  userId: number;
 };
 
-type StudentContextType = {
-  students: Student[];
-  setStudents: React.Dispatch<React.SetStateAction<Student[]>>;
+type AppContextType = {
+  trips: Trip[];
+  setTrips: React.Dispatch<React.SetStateAction<Trip[]>>;
+  currentUserId: number;
 };
 
-export const StudentContext =
-  createContext<StudentContextType | null>(null);
+export const AppContext = createContext<AppContextType | null>(null);
 
 export default function RootLayout() {
-  const [students, setStudents] = useState<Student[]>([]);
+  const [trips, setTrips] = useState<Trip[]>([]);
+  const currentUserId = 1;
 
   useEffect(() => {
-    const loadStudents = async () => {
-      await seedStudentsIfEmpty();
-      const rows = await db.select().from(studentsTable);
-      setStudents(rows);
+    const load = async () => {
+      await seedIfEmpty();
+      const rows = await db.select().from(tripsTable);
+      setTrips(rows);
     };
 
-    void loadStudents();
+    void load();
   }, []);
 
   return (
-    <StudentContext.Provider value={{ students, setStudents }}>
+    <AppContext.Provider value={{ trips, setTrips, currentUserId }}>
       <Stack />
-    </StudentContext.Provider>
+    </AppContext.Provider>
   );
 }
