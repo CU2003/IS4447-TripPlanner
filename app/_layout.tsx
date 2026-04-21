@@ -25,12 +25,14 @@ export default function RootLayout() {
       if (themeRow.length > 0) setTheme(themeRow[0].value as ThemeMode);
 
       const sessionRow = await db.select().from(appSettings).where(eq(appSettings.key, 'current_user_id'));
-      const sessionId = sessionRow.length > 0 ? parseInt(sessionRow[0].value) : 1;
-      const userRows = await db.select().from(users).where(eq(users.id, sessionId));
-      if (userRows.length > 0) {
-        const u = userRows[0];
-        setUser({ id: u.id, email: u.email, name: u.name });
-        await loadAppData(u.id);
+      if (sessionRow.length > 0) {
+        const userId = parseInt(sessionRow[0].value);
+        const userRows = await db.select().from(users).where(eq(users.id, userId));
+        if (userRows.length > 0) {
+          const u = userRows[0];
+          setUser({ id: u.id, email: u.email, name: u.name });
+          await loadAppData(u.id);
+        }
       }
 
       setLoaded(true);
