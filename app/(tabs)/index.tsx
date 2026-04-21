@@ -1,46 +1,72 @@
+import { useRouter } from 'expo-router';
+import { useState } from 'react';
+import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import PrimaryButton from '@/components/ui/primary-button';
 import ScreenHeader from '@/components/ui/screen-header';
-import { useRouter } from 'expo-router';
-import { useContext } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { AppContext, Trip } from '../_layout';
+import { useAppContext } from '@/context/app-context';
+import { useTheme } from '@/context/theme-context';
+import { formatDate } from '@/utils/date';
 
-export default function IndexScreen() {
+export default function TripsScreen() {
   const router = useRouter();
-  const context = useContext(AppContext);
+  const { trips, categories } = useAppContext();
+  const { colors } = useTheme();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
 
-  if (!context) return null;
+  const normalized = searchQuery.trim().toLowerCase();
 
-  const { trips } = context;
+  const filtered = trips.filter((t) => {
+    const matchesSearch =
+      normalized.length === 0 ||
+      t.name.toLowerCase().includes(normalized) ||
+      t.destination.toLowerCase().includes(normalized);
+    return matchesSearch;
+  });
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
       <ScreenHeader
-        title="My Trips"
+        title="TripPlanner"
         subtitle={`${trips.length} trip${trips.length !== 1 ? 's' : ''}`}
       />
 
-      <PrimaryButton
-        label="Add Trip"
-        onPress={() => router.push({ pathname: '../add' })}
+      <PrimaryButton label="+ Add Trip" onPress={() => router.push('/trip/add')} />
+
+      <TextInput
+        value={searchQuery}
+        onChangeText={setSearchQuery}
+        placeholder="Search trips…"
+        placeholderTextColor={colors.textSecondary}
+        accessibilityLabel="Search trips"
+        style={[styles.searchInput, { backgroundColor: colors.searchBg, borderColor: colors.searchBorder, color: colors.text }]}
       />
 
-      <ScrollView
-        contentContainerStyle={styles.listContent}
-        showsVerticalScrollIndicator={false}
-      >
-        {trips.length === 0 ? (
-          <Text style={styles.emptyText}>No trips yet. Add your first trip!</Text>
+      <ScrollView contentContainerStyle={styles.listContent} showsVerticalScrollIndicator={false}>
+        {filtered.length === 0 ? (
+          <View style={styles.emptyState}>
+            <Text style={styles.emptyEmoji}>✈️</Text>
+            <Text style={[styles.emptyTitle, { color: colors.text }]}>No trips yet</Text>
+            <Text style={[styles.emptySubtitle, { color: colors.textSecondary }]}>
+              {trips.length === 0 ? 'Tap "+ Add Trip" to get started.' : 'No trips match your search.'}
+            </Text>
+          </View>
         ) : (
-          trips.map((trip: Trip) => (
-            <View key={trip.id} style={styles.card}>
-              <Text style={styles.cardTitle}>{trip.name}</Text>
-              <Text style={styles.cardSubtitle}>{trip.destination}</Text>
-              <Text style={styles.cardDates}>
-                {trip.startDate} → {trip.endDate}
+          filtered.map((trip) => (
+            <Pressable
+              key={trip.id}
+              accessibilityLabel={`View ${trip.name}`}
+              accessibilityRole="button"
+              onPress={() => router.push({ pathname: '/trip/[id]', params: { id: trip.id.toString() } })}
+              style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}
+            >
+              <Text style={[styles.cardTitle, { color: colors.text }]}>{trip.name}</Text>
+              <Text style={[styles.cardDestination, { color: colors.textSecondary }]}>{trip.destination}</Text>
+              <Text style={[styles.cardDates, { color: colors.textSecondary }]}>
+                {formatDate(trip.startDate)} → {formatDate(trip.endDate)}
               </Text>
-            </View>
+            </Pressable>
           ))
         )}
       </ScrollView>
@@ -49,43 +75,15 @@ export default function IndexScreen() {
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
-    backgroundColor: '#F8FAFC',
-    flex: 1,
-    paddingHorizontal: 18,
-    paddingTop: 10,
-  },
-  listContent: {
-    paddingBottom: 24,
-    paddingTop: 14,
-    gap: 12,
-  },
-  card: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-    padding: 16,
-  },
-  cardTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#0F172A',
-  },
-  cardSubtitle: {
-    fontSize: 14,
-    color: '#475569',
-    marginTop: 2,
-  },
-  cardDates: {
-    fontSize: 13,
-    color: '#94A3B8',
-    marginTop: 6,
-  },
-  emptyText: {
-    color: '#475569',
-    fontSize: 16,
-    paddingTop: 8,
-    textAlign: 'center',
-  },
+  safeArea: { flex: 1, paddingHorizontal: 18, paddingTop: 10 },
+  searchInput: { borderRadius: 10, borderWidth: 1, marginTop: 14, paddingHorizontal: 12, paddingVertical: 10 },
+  listContent: { paddingBottom: 24, paddingTop: 14 },
+  card: { borderRadius: 12, borderWidth: 1, marginBottom: 12, padding: 16 },
+  cardTitle: { fontSize: 16, fontWeight: '600' },
+  cardDestination: { fontSize: 14, marginTop: 2 },
+  cardDates: { fontSize: 13, marginTop: 6 },
+  emptyState: { alignItems: 'center', paddingTop: 48 },
+  emptyEmoji: { fontSize: 40, marginBottom: 12 },
+  emptyTitle: { fontSize: 18, fontWeight: '700', marginBottom: 6 },
+  emptySubtitle: { fontSize: 14, textAlign: 'center' },
 });

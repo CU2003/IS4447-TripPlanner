@@ -6,34 +6,42 @@ const sqlite = openDatabaseSync('planner.db');
 sqlite.execSync(
   `CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
-    email TEXT NOT NULL UNIQUE,
+    email TEXT NOT NULL,
     password TEXT NOT NULL,
+    name TEXT NOT NULL,
     created_at TEXT NOT NULL
+  );`
+);
+
+sqlite.execSync(
+  `CREATE TABLE IF NOT EXISTS app_settings (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    key TEXT NOT NULL,
+    value TEXT NOT NULL
   );`
 );
 
 sqlite.execSync(
   `CREATE TABLE IF NOT EXISTS categories (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
-    colour TEXT NOT NULL,
-    icon TEXT,
     user_id INTEGER NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES users(id)
+    name TEXT NOT NULL,
+    color TEXT NOT NULL,
+    icon TEXT NOT NULL,
+    created_at TEXT NOT NULL
   );`
 );
 
 sqlite.execSync(
   `CREATE TABLE IF NOT EXISTS trips (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
     name TEXT NOT NULL,
     destination TEXT NOT NULL,
     start_date TEXT NOT NULL,
     end_date TEXT NOT NULL,
     notes TEXT,
-    user_id INTEGER NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES users(id)
+    created_at TEXT NOT NULL
   );`
 );
 
@@ -42,13 +50,13 @@ sqlite.execSync(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     trip_id INTEGER NOT NULL,
     category_id INTEGER NOT NULL,
+    user_id INTEGER NOT NULL,
     name TEXT NOT NULL,
     date TEXT NOT NULL,
     duration INTEGER,
     count INTEGER NOT NULL DEFAULT 1,
     notes TEXT,
-    FOREIGN KEY (trip_id) REFERENCES trips(id),
-    FOREIGN KEY (category_id) REFERENCES categories(id)
+    created_at TEXT NOT NULL
   );`
 );
 
@@ -61,9 +69,7 @@ sqlite.execSync(
     type TEXT NOT NULL,
     metric TEXT NOT NULL,
     value INTEGER NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES users(id),
-    FOREIGN KEY (trip_id) REFERENCES trips(id),
-    FOREIGN KEY (category_id) REFERENCES categories(id)
+    created_at TEXT NOT NULL
   );`
 );
 
