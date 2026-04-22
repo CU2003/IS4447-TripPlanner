@@ -1,5 +1,5 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { eq } from 'drizzle-orm';
 import { db } from '@/db/client';
@@ -80,9 +80,16 @@ export default function TripDetailScreen() {
             {tripActivities.map((a) => {
               const cat = categories.find((c) => c.id === a.categoryId);
               return (
-                <View
+                <Pressable
                   key={a.id}
-                  style={[styles.activityRow, { backgroundColor: colors.card, borderColor: colors.border }]}
+                  accessibilityLabel={`Edit ${a.name}`}
+                  accessibilityRole="button"
+                  onPress={() => router.push({ pathname: '/activity/[id]/edit', params: { id: a.id.toString() } })}
+                  style={({ pressed }) => [
+                    styles.activityRow,
+                    { backgroundColor: colors.card, borderColor: colors.border },
+                    pressed && styles.activityRowPressed,
+                  ]}
                 >
                   <View style={[styles.dot, { backgroundColor: cat?.color ?? '#94A3B8' }]} />
                   <View style={styles.activityInfo}>
@@ -91,7 +98,7 @@ export default function TripDetailScreen() {
                       {formatDate(a.date)}{a.duration ? ` · ${a.duration} min` : ''}
                     </Text>
                   </View>
-                </View>
+                </Pressable>
               );
             })}
           </View>
@@ -121,6 +128,7 @@ const styles = StyleSheet.create({
   },
   dot: { borderRadius: 999, height: 10, marginRight: 10, width: 10 },
   activityInfo: { flex: 1 },
+  activityRowPressed: { opacity: 0.88 },
   activityName: { fontSize: 14, fontWeight: '600' },
   activityMeta: { fontSize: 12, marginTop: 2 },
 });
