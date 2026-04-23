@@ -68,13 +68,16 @@ export default function ProfileScreen() {
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
-          <View style={styles.avatarCircle}>
+          <View style={[styles.avatarCircle, { backgroundColor: colors.primary }]}>
             <Text style={styles.avatarText}>
               {user?.name?.charAt(0).toUpperCase() ?? '?'}
             </Text>
           </View>
           <Text style={[styles.userName, { color: colors.text }]}>{user?.name}</Text>
           <Text style={[styles.userEmail, { color: colors.textSecondary }]}>{user?.email}</Text>
+          <View style={[styles.memberBadge, { backgroundColor: colors.primary + '18' }]}>
+            <Text style={[styles.memberText, { color: colors.primary }]}>TripPlanner Member</Text>
+          </View>
         </View>
 
         <View style={[styles.section, { backgroundColor: colors.card, borderColor: colors.border }]}>
@@ -137,16 +140,22 @@ const styles = StyleSheet.create({
   },
   avatarCircle: {
     alignItems: 'center',
-    backgroundColor: '#0F766E',
     borderRadius: 999,
-    height: 60,
+    height: 72,
     justifyContent: 'center',
     marginBottom: 12,
-    width: 60,
+    width: 72,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+    elevation: 3,
   },
-  avatarText: { color: '#FFFFFF', fontSize: 26, fontWeight: '700' },
-  userName: { fontSize: 18, fontWeight: '700' },
+  avatarText: { color: '#FFFFFF', fontSize: 30, fontWeight: '800' },
+  userName: { fontSize: 20, fontWeight: '700', marginTop: 2 },
   userEmail: { fontSize: 14, marginTop: 4 },
+  memberBadge: { borderRadius: 999, marginTop: 10, paddingHorizontal: 14, paddingVertical: 5 },
+  memberText: { fontSize: 12, fontWeight: '600' },
   section: { borderRadius: 14, borderWidth: 1, marginBottom: 16, padding: 16 },
   sectionTitle: { fontSize: 15, fontWeight: '700', marginBottom: 12 },
   settingRow: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' },

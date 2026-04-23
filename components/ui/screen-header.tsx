@@ -1,4 +1,5 @@
 import { StyleSheet, Text, View } from 'react-native';
+import { useTheme } from '@/context/theme-context';
 
 type Props = {
   title: string;
@@ -6,10 +7,13 @@ type Props = {
 };
 
 export default function ScreenHeader({ title, subtitle }: Props) {
+  const { colors } = useTheme();
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{title}</Text>
-      {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
+      <Text style={[styles.title, { color: colors.text }]}>{title}</Text>
+      {subtitle ? <Text style={[styles.subtitle, { color: colors.textSecondary }]}>{subtitle}</Text> : null}
+      <View style={[styles.underline, { backgroundColor: colors.primary }]} />
     </View>
   );
 }
@@ -19,13 +23,17 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   title: {
-    color: '#111827',
     fontSize: 28,
-    fontWeight: '700',
+    fontWeight: '800',
   },
   subtitle: {
-    color: '#6B7280',
     fontSize: 14,
-    marginTop: 4,
+    marginTop: 3,
+  },
+  underline: {
+    borderRadius: 999,
+    height: 3,
+    marginTop: 8,
+    width: 36,
   },
 });
