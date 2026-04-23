@@ -1,7 +1,9 @@
+// exports all the users activites to a csv file and opens the share dialog
 import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
 import type { Activity, Trip, Category } from '@/context/app-context';
 
+// makes sure values with commas or quotes dont break the csv format
 function escapeCSV(value: string | number | null | undefined): string {
   if (value === null || value === undefined) return '';
   const str = String(value);

@@ -12,6 +12,7 @@ import PrimaryButton from '@/components/ui/primary-button';
 import ScreenHeader from '@/components/ui/screen-header';
 import { formatDate } from '@/utils/date';
 
+// shows the details of a trip and lists all its activites, can also delete from here
 export default function TripDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
@@ -26,6 +27,7 @@ export default function TripDetailScreen() {
 
   const normalized = searchQuery.trim().toLowerCase();
 
+  // filters and sorts the activites for this trip
   const tripActivities = activities
     .filter((a) => {
       if (a.tripId !== Number(id)) return false;

@@ -8,6 +8,7 @@ import ScreenHeader from '@/components/ui/screen-header';
 import { useAppContext } from '@/context/app-context';
 import { useTheme } from '@/context/theme-context';
 
+// main screen that shows all the users trips with search and category filtering
 export default function TripsScreen() {
   const router = useRouter();
   const { trips, activities, categories } = useAppContext();
@@ -15,6 +16,7 @@ export default function TripsScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
 
+  // filters trips based on the search text and selected category
   const normalized = searchQuery.trim().toLowerCase();
 
   const filtered = trips.filter((t) => {

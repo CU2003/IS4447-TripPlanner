@@ -11,6 +11,7 @@ import FormField from '@/components/ui/form-field';
 import PrimaryButton from '@/components/ui/primary-button';
 import ScreenHeader from '@/components/ui/screen-header';
 
+// form for adding a new trip, saves it to the db and updates the list
 export default function AddTripScreen() {
   const router = useRouter();
   const { user } = useAuth();
@@ -51,6 +52,7 @@ export default function AddTripScreen() {
       })
       .returning();
 
+    // inserts the trip and adds it to context so it shows up straght away
     if (inserted) setTrips([...tripList, inserted as any]);
     router.back();
   };

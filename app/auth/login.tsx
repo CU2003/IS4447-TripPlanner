@@ -19,6 +19,7 @@ import { useTheme } from '@/context/theme-context';
 import FormField from '@/components/ui/form-field';
 import PrimaryButton from '@/components/ui/primary-button';
 
+// handles login, checks the db to see if the email and pasword match
 export default function LoginScreen() {
   const router = useRouter();
   const { setUser } = useAuth();
@@ -60,6 +61,7 @@ export default function LoginScreen() {
         await db.insert(appSettings).values({ key: 'current_user_id', value: String(u.id) });
       }
 
+      // saves the current user to app settings so they stay logged in
       setUser({ id: u.id, email: u.email, name: u.name });
       router.replace('/');
     } finally {

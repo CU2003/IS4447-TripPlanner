@@ -18,6 +18,7 @@ const DESTINATIONS = [
   { city: 'Dublin', lat: 53.3498, lon: -6.2603 },
 ];
 
+// insights page showing trip stats, charts and a live weather card from an external api
 export default function InsightsScreen() {
   const { trips, activities, targets, categories } = useAppContext();
   const { colors } = useTheme();
@@ -51,6 +52,7 @@ export default function InsightsScreen() {
   const monthStart = getMonthStart();
   const today = todayStr();
 
+  // builds the data for the bar chart using the last 7 days of activites
   const barData = last7.map((date) => ({
     label: dayLabel(date),
     value: activities.filter((a) => a.date === date).length,

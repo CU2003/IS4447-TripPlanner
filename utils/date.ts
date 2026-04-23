@@ -1,3 +1,4 @@
+// utility functions for working with dates across the app
 export function todayStr(): string {
   return new Date().toISOString().split('T')[0];
 }
@@ -27,6 +28,7 @@ export function getLast30Days(): string[] {
   return days;
 }
 
+// gets the monday of the curent week for the weekly target calulation
 export function getWeekStart(): string {
   const d = new Date();
   const day = d.getDay();

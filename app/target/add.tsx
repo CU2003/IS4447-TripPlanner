@@ -14,6 +14,7 @@ import ScreenHeader from '@/components/ui/screen-header';
 type Period = 'weekly' | 'monthly';
 type Metric = 'count' | 'duration';
 
+// lets the user set a goal for activites, can filter by trip or category
 export default function AddTargetScreen() {
   const router = useRouter();
   const { user } = useAuth();
@@ -39,6 +40,7 @@ export default function AddTargetScreen() {
       .values({ userId: user.id, tripId, categoryId, type: period, metric, value: numValue, createdAt: now })
       .returning();
 
+    // inserts the target and adds it to the list in context
     if (inserted) setTargets([...targetList, inserted as any]);
     router.back();
   };

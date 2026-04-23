@@ -11,6 +11,7 @@ import ScreenHeader from '@/components/ui/screen-header';
 import PrimaryButton from '@/components/ui/primary-button';
 import { exportActivitiesToCSV } from '@/utils/csv';
 
+// profile screen with account info, settings and data managment options
 export default function ProfileScreen() {
   const { user, setUser } = useAuth();
   const { theme, toggleTheme, colors } = useTheme();
@@ -34,6 +35,7 @@ export default function ProfileScreen() {
     router.replace('/auth/login');
   };
 
+  // deletes all the users data from every table then logs them out
   const handleDeleteProfile = () => {
     Alert.alert(
       'Delete Account',

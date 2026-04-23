@@ -11,11 +11,13 @@ import PrimaryButton from '@/components/ui/primary-button';
 import ProgressBar from '@/components/ui/progress-bar';
 import { getWeekStart, getMonthStart, todayStr } from '@/utils/date';
 
+// shows all the targets with a progress bar for each one
 export default function TargetsScreen() {
   const router = useRouter();
   const { targets: targetList, activities, trips, categories, setTargets } = useAppContext();
   const { colors } = useTheme();
 
+  // works out how much progress has been made towrds the target
   const calcProgress = (target: typeof targetList[0]): number => {
     const start = target.type === 'weekly' ? getWeekStart() : getMonthStart();
     const today = todayStr();

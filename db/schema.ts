@@ -1,3 +1,4 @@
+// defines all the databse tables used in the app
 import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core';
 
 export const users = sqliteTable('users', {
@@ -34,6 +35,7 @@ export const trips = sqliteTable('trips', {
   createdAt: text('created_at').notNull(),
 });
 
+// activites are linked to both a trip and a category
 export const activities = sqliteTable('activities', {
   id: integer('id').primaryKey({ autoIncrement: true }),
   tripId: integer('trip_id').notNull(),

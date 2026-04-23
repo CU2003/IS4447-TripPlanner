@@ -1,3 +1,4 @@
+// holds all the trips, activites, categories and targets so any screen can access them
 import { createContext, useContext } from 'react';
 
 export type Category = {
@@ -55,6 +56,7 @@ export type AppContextType = {
   setTargets: React.Dispatch<React.SetStateAction<Target[]>>;
 };
 
+// context is null by default so the hook below will catch if its used wrong
 export const AppContext = createContext<AppContextType | null>(null);
 
 export function useAppContext(): AppContextType {

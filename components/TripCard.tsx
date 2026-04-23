@@ -10,6 +10,7 @@ type Props = {
   activityCount: number;
 };
 
+// card component shown on the home screen for each trip
 export default function TripCard({ trip, activityCount }: Props) {
   const router = useRouter();
   const { colors } = useTheme();
@@ -25,6 +26,7 @@ export default function TripCard({ trip, activityCount }: Props) {
         pressed && styles.cardPressed,
       ]}
     >
+      {/* coloured bar on the left side of each card */}
       <View style={[styles.accent, { backgroundColor: colors.primary }]} />
 
       <View style={styles.body}>

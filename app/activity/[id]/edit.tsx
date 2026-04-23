@@ -11,6 +11,7 @@ import FormField from '@/components/ui/form-field';
 import PrimaryButton from '@/components/ui/primary-button';
 import ScreenHeader from '@/components/ui/screen-header';
 
+// edit screen for an activty, loads the existing data into the form fields
 export default function EditActivityScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
@@ -54,6 +55,7 @@ export default function EditActivityScreen() {
       })
       .where(eq(activities.id, activity.id));
 
+    // updates the activty in context so the ui reflects the changes strait away
     setActivities((prev) =>
       prev.map((a) =>
         a.id === activity.id

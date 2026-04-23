@@ -11,6 +11,7 @@ import FormField from '@/components/ui/form-field';
 import PrimaryButton from '@/components/ui/primary-button';
 import ScreenHeader from '@/components/ui/screen-header';
 
+// pre-fills the form with the existing trip data so the user can edit it
 export default function EditTripScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
@@ -52,6 +53,7 @@ export default function EditTripScreen() {
       })
       .where(eq(trips.id, trip.id));
 
+    // updates context so the changes show up without needing to refetch from db
     setTrips((prev) =>
       prev.map((t) =>
         t.id === trip.id

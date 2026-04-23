@@ -9,11 +9,13 @@ import { useTheme } from '@/context/theme-context';
 import ScreenHeader from '@/components/ui/screen-header';
 import PrimaryButton from '@/components/ui/primary-button';
 
+// lists all the users categories, wont let you delete one if its being used
 export default function CategoriesScreen() {
   const router = useRouter();
   const { categories: cats, setCategories, activities } = useAppContext();
   const { colors } = useTheme();
 
+  // checks if the category is attatched to any activites before deleting
   const handleDelete = (id: number) => {
     const inUse = activities.some((a) => a.categoryId === id);
     if (inUse) {

@@ -1,7 +1,9 @@
+// fills the db with some sample trips and activites if its empty
 import { db } from './client';
 import { users, categories, trips, activities, targets } from './schema';
 
 export async function seedIfEmpty() {
+  // bail out early if theres already data in the db
   const existing = await db.select().from(users);
   if (existing.length > 0) return;
 

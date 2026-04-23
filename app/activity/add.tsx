@@ -11,6 +11,7 @@ import FormField from '@/components/ui/form-field';
 import PrimaryButton from '@/components/ui/primary-button';
 import ScreenHeader from '@/components/ui/screen-header';
 
+// form to add a new activity to a trip, category is picked using the pills
 export default function AddActivityScreen() {
   const { tripId } = useLocalSearchParams<{ tripId: string }>();
   const router = useRouter();
@@ -55,6 +56,7 @@ export default function AddActivityScreen() {
       })
       .returning();
 
+    // saves the activty and updates context so it apears without refreshing
     if (inserted) setActivities([...activityList, inserted as any]);
     router.back();
   };
