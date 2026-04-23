@@ -1,7 +1,9 @@
 import React from 'react';
 import { render } from '@testing-library/react-native';
-import { StudentContext } from '../app/_layout';
-import IndexScreen from '../app/(tabs)/index';
+import { AppContext } from '../context/app-context';
+import { AuthContext } from '../context/auth-context';
+import { ThemeContext, lightColors } from '../context/theme-context';
+import TripsScreen from '../app/(tabs)/index';
 
 jest.mock('@/db/client', () => ({
   db: {
@@ -11,7 +13,8 @@ jest.mock('@/db/client', () => ({
 }));
 
 jest.mock('expo-router', () => ({
-  useRouter: () => ({ push: jest.fn(), back: jest.fn() }),
+  useRouter: () => ({ push: jest.fn(), back: jest.fn(), replace: jest.fn() }),
+  Redirect: () => null,
 }));
 
 jest.mock('react-native-safe-area-context', () => {
@@ -19,23 +22,72 @@ jest.mock('react-native-safe-area-context', () => {
   return { SafeAreaView: View };
 });
 
-const mockStudent = {
+const mockTrip = {
   id: 1,
-  name: 'Test Student',
-  major: 'Computer Science',
-  year: '3',
-  count: 0,
+  userId: 1,
+  name: 'Paris Holiday',
+  destination: 'Paris, France',
+  startDate: '2025-06-01',
+  endDate: '2025-06-10',
+  notes: null,
+  createdAt: '2025-01-01T00:00:00.000Z',
 };
 
-describe('IndexScreen', () => {
-  it('renders the student and the add button', () => {
+const mockCategory = {
+  id: 1,
+  userId: 1,
+  name: 'Sightseeing',
+  color: '#3B82F6',
+  icon: 'camera',
+  createdAt: '2025-01-01T00:00:00.000Z',
+};
+
+const mockUser = { id: 1, email: 'test@test.com', name: 'Test User' };
+
+const mockTheme = {
+  theme: 'light' as const,
+  toggleTheme: jest.fn(),
+  colors: lightColors,
+};
+
+const mockAppContext = {
+  trips: [mockTrip],
+  activities: [],
+  categories: [mockCategory],
+  targets: [],
+  setTrips: jest.fn(),
+  setActivities: jest.fn(),
+  setCategories: jest.fn(),
+  setTargets: jest.fn(),
+};
+
+describe('TripsScreen', () => {
+  it('renders seeded trip from database and the Add Trip button', () => {
     const { getByText } = render(
-      <StudentContext.Provider value={{ students: [mockStudent], setStudents: jest.fn() }}>
-        <IndexScreen />
-      </StudentContext.Provider>
+      <ThemeContext.Provider value={mockTheme}>
+        <AuthContext.Provider value={{ user: mockUser, setUser: jest.fn() }}>
+          <AppContext.Provider value={mockAppContext}>
+            <TripsScreen />
+          </AppContext.Provider>
+        </AuthContext.Provider>
+      </ThemeContext.Provider>
     );
 
-    expect(getByText('Test Student')).toBeTruthy();
-    expect(getByText('Add Student')).toBeTruthy();
+    expect(getByText('Paris Holiday')).toBeTruthy();
+    expect(getByText('+ Add Trip')).toBeTruthy();
+  });
+
+  it('shows empty state when no trips exist', () => {
+    const { getByText } = render(
+      <ThemeContext.Provider value={mockTheme}>
+        <AuthContext.Provider value={{ user: mockUser, setUser: jest.fn() }}>
+          <AppContext.Provider value={{ ...mockAppContext, trips: [] }}>
+            <TripsScreen />
+          </AppContext.Provider>
+        </AuthContext.Provider>
+      </ThemeContext.Provider>
+    );
+
+    expect(getByText('No trips yet')).toBeTruthy();
   });
 });

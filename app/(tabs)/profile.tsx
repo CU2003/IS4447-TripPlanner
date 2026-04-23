@@ -9,12 +9,21 @@ import { useTheme } from '@/context/theme-context';
 import { useAppContext } from '@/context/app-context';
 import ScreenHeader from '@/components/ui/screen-header';
 import PrimaryButton from '@/components/ui/primary-button';
+import { exportActivitiesToCSV } from '@/utils/csv';
 
 export default function ProfileScreen() {
   const { user, setUser } = useAuth();
   const { theme, toggleTheme, colors } = useTheme();
-  const { setTrips, setActivities, setCategories, setTargets } = useAppContext();
+  const { setTrips, setActivities, setCategories, setTargets, activities: activityList, trips: tripList, categories: categoryList } = useAppContext();
   const router = useRouter();
+
+  const handleExport = async () => {
+    try {
+      await exportActivitiesToCSV(activityList, tripList, categoryList);
+    } catch {
+      Alert.alert('Export failed', 'Could not export activities.');
+    }
+  };
 
   const handleLogout = async () => {
     const rows = await db.select().from(appSettings).where(eq(appSettings.key, 'current_user_id'));
@@ -93,6 +102,13 @@ export default function ProfileScreen() {
               label="Manage Targets"
               variant="secondary"
               onPress={() => router.push('/target')}
+            />
+          </View>
+          <View style={styles.buttonSpacing}>
+            <PrimaryButton
+              label="Export Activities (CSV)"
+              variant="secondary"
+              onPress={handleExport}
             />
           </View>
         </View>
