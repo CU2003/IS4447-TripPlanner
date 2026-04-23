@@ -86,13 +86,13 @@ export default function ProfileScreen() {
           <PrimaryButton
             label="Manage Categories"
             variant="secondary"
-            onPress={() => router.push('/category/index')}
+            onPress={() => router.push('/category')}
           />
           <View style={styles.buttonSpacing}>
             <PrimaryButton
               label="Manage Targets"
               variant="secondary"
-              onPress={() => router.push('/target/index')}
+              onPress={() => router.push('/target')}
             />
           </View>
         </View>

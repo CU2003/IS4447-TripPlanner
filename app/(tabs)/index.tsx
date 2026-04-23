@@ -87,7 +87,6 @@ export default function TripsScreen() {
       <ScrollView contentContainerStyle={styles.listContent} showsVerticalScrollIndicator={false}>
         {filtered.length === 0 ? (
           <View style={styles.emptyState}>
-            <Text style={styles.emptyEmoji}>✈️</Text>
             <Text style={[styles.emptyTitle, { color: colors.text }]}>No trips yet</Text>
             <Text style={[styles.emptySubtitle, { color: colors.textSecondary }]}>
               {trips.length === 0 ? 'Tap "+ Add Trip" to get started.' : 'No trips match your search.'}
@@ -110,13 +109,12 @@ export default function TripsScreen() {
 const styles = StyleSheet.create({
   safeArea: { flex: 1, paddingHorizontal: 18, paddingTop: 10 },
   searchInput: { borderRadius: 10, borderWidth: 1, marginTop: 14, paddingHorizontal: 12, paddingVertical: 10 },
-  filterRow: { marginTop: 10 },
-  filterContent: { gap: 8, paddingBottom: 4 },
-  filterPill: { borderRadius: 999, borderWidth: 1, paddingHorizontal: 14, paddingVertical: 7 },
+  filterRow: { marginTop: 10, flexGrow: 0 },
+  filterContent: { gap: 8, paddingBottom: 4, alignItems: 'center' },
+  filterPill: { borderRadius: 999, borderWidth: 1, paddingHorizontal: 14, paddingVertical: 7, alignSelf: 'flex-start' },
   filterText: { fontSize: 13, fontWeight: '500' },
   listContent: { paddingBottom: 24, paddingTop: 14 },
   emptyState: { alignItems: 'center', paddingTop: 48 },
-  emptyEmoji: { fontSize: 40, marginBottom: 12 },
   emptyTitle: { fontSize: 18, fontWeight: '700', marginBottom: 6 },
   emptySubtitle: { fontSize: 14, textAlign: 'center' },
 });

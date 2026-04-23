@@ -38,6 +38,7 @@ export default function CategoriesScreen() {
       <ScreenHeader title="Categories" subtitle={`${cats.length} categories`} />
 
       <PrimaryButton label="+ Add Category" onPress={() => router.push('/category/add')} />
+      <PrimaryButton label="← Back" variant="secondary" onPress={() => router.back()} />
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         {cats.length === 0 ? (

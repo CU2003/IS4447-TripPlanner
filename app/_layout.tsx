@@ -88,7 +88,7 @@ export default function RootLayout() {
             <Stack.Screen name="(tabs)" />
             <Stack.Screen name="auth/login" />
             <Stack.Screen name="auth/register" />
-            <Stack.Screen name="category/index" options={{ headerShown: true, title: 'Categories' }} />
+            <Stack.Screen name="category" options={{ headerShown: true, title: 'Categories' }} />
             <Stack.Screen name="category/add" options={{ headerShown: true, title: 'Add Category' }} />
             <Stack.Screen name="category/[id]/edit" options={{ headerShown: true, title: 'Edit Category' }} />
             <Stack.Screen name="trip/add" options={{ headerShown: true, title: 'Add Trip' }} />
@@ -96,7 +96,7 @@ export default function RootLayout() {
             <Stack.Screen name="trip/[id]/edit" options={{ headerShown: true, title: 'Edit Trip' }} />
             <Stack.Screen name="activity/add" options={{ headerShown: true, title: 'Add Activity' }} />
             <Stack.Screen name="activity/[id]/edit" options={{ headerShown: true, title: 'Edit Activity' }} />
-            <Stack.Screen name="target/index" options={{ headerShown: true, title: 'Targets' }} />
+            <Stack.Screen name="target" options={{ headerShown: true, title: 'Targets' }} />
             <Stack.Screen name="target/add" options={{ headerShown: true, title: 'Add Target' }} />
           </Stack>
         </AppContext.Provider>

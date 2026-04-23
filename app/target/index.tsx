@@ -64,6 +64,7 @@ export default function TargetsScreen() {
       <ScreenHeader title="Targets" subtitle={`${targetList.length} goal${targetList.length !== 1 ? 's' : ''}`} />
 
       <PrimaryButton label="+ Add Target" onPress={() => router.push('/target/add')} />
+      <PrimaryButton label="← Back" variant="secondary" onPress={() => router.back()} />
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         {targetList.length === 0 ? (
