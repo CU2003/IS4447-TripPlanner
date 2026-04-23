@@ -48,15 +48,15 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "0c1d33ff-849f-4cbd-86b3-79efbfa0ae26"
+        "projectId": "6618d93c-0d20-447a-bfdd-302a56435841"
       }
     },
-    "owner": "rory1",
+    "owner": "conorusti",
     "runtimeVersion": {
-      "policy": "appVersion"
+      "policy": "sdkVersion"
     },
     "updates": {
-      "url": "https://u.expo.dev/0c1d33ff-849f-4cbd-86b3-79efbfa0ae26"
+      "url": "https://u.expo.dev/6618d93c-0d20-447a-bfdd-302a56435841"
     }
   }
 }
