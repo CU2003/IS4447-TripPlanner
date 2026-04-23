@@ -109,12 +109,6 @@ export default function LoginScreen() {
             </Pressable>
           </View>
 
-          <View style={styles.demoBox}>
-            <Text style={[styles.demoTitle, { color: colors.textSecondary }]}>Demo account</Text>
-            <Text style={[styles.demoCredentials, { color: colors.text }]}>
-              Email: demo@example.com{'\n'}Password: password123
-            </Text>
-          </View>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -138,12 +132,4 @@ const styles = StyleSheet.create({
   },
   registerText: { fontSize: 14 },
   registerLink: { fontSize: 14, fontWeight: '600' },
-  demoBox: {
-    borderRadius: 10,
-    backgroundColor: '#F0FDF4',
-    marginTop: 32,
-    padding: 14,
-  },
-  demoTitle: { fontSize: 12, fontWeight: '600', marginBottom: 4 },
-  demoCredentials: { fontSize: 13 },
 });

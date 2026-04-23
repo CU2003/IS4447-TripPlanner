@@ -8,33 +8,42 @@ import BarChart from '@/components/ui/bar-chart';
 import ProgressBar from '@/components/ui/progress-bar';
 import { getLast7Days, dayLabel, getWeekStart, getMonthStart, todayStr } from '@/utils/date';
 
-type Quote = { q: string; a: string } | null;
+type Weather = { temperature: number; windspeed: number; city: string } | null;
+
+const DESTINATIONS = [
+  { city: 'Paris', lat: 48.8566, lon: 2.3522 },
+  { city: 'Tokyo', lat: 35.6762, lon: 139.6503 },
+  { city: 'Rome', lat: 41.9028, lon: 12.4964 },
+  { city: 'Barcelona', lat: 41.3851, lon: 2.1734 },
+  { city: 'Dublin', lat: 53.3498, lon: -6.2603 },
+];
 
 export default function InsightsScreen() {
   const { trips, activities, targets, categories } = useAppContext();
   const { colors } = useTheme();
-  const [quote, setQuote] = useState<Quote>(null);
-  const [quoteLoading, setQuoteLoading] = useState(true);
-  const [quoteError, setQuoteError] = useState(false);
+  const [weather, setWeather] = useState<Weather>(null);
+  const [weatherLoading, setWeatherLoading] = useState(true);
+  const [weatherError, setWeatherError] = useState(false);
 
   useEffect(() => {
-    const fetchQuote = async () => {
-      setQuoteLoading(true);
-      setQuoteError(false);
+    const fetchWeather = async () => {
+      setWeatherLoading(true);
+      setWeatherError(false);
       try {
-        const res = await fetch('https://zenquotes.io/api/random');
+        const dest = DESTINATIONS[Math.floor(Math.random() * DESTINATIONS.length)];
+        const res = await fetch(
+          `https://api.open-meteo.com/v1/forecast?latitude=${dest.lat}&longitude=${dest.lon}&current_weather=true`
+        );
         if (!res.ok) throw new Error('API error');
-        const data = (await res.json()) as { q: string; a: string }[];
-        if (Array.isArray(data) && data.length > 0) {
-          setQuote(data[0]);
-        }
+        const data = (await res.json()) as { current_weather: { temperature: number; windspeed: number } };
+        setWeather({ temperature: data.current_weather.temperature, windspeed: data.current_weather.windspeed, city: dest.city });
       } catch {
-        setQuoteError(true);
+        setWeatherError(true);
       } finally {
-        setQuoteLoading(false);
+        setWeatherLoading(false);
       }
     };
-    void fetchQuote();
+    void fetchWeather();
   }, []);
 
   const last7 = getLast7Days();
@@ -72,15 +81,17 @@ export default function InsightsScreen() {
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
 
-        <View style={[styles.quoteCard, { backgroundColor: colors.primary }]}>
-          {quoteLoading ? (
-            <ActivityIndicator color="#FFFFFF" />
-          ) : quoteError ? (
-            <Text style={styles.quoteText}>Adventure is worthwhile. Keep exploring! ✈️</Text>
-          ) : quote ? (
+        <View style={[styles.weatherCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+          <Text style={[styles.weatherTitle, { color: colors.textSecondary }]}>Weather at a Destination</Text>
+          {weatherLoading ? (
+            <ActivityIndicator color={colors.primary} />
+          ) : weatherError ? (
+            <Text style={[styles.weatherCity, { color: colors.text }]}>Could not load weather data.</Text>
+          ) : weather ? (
             <>
-              <Text style={styles.quoteText}>"{quote.q}"</Text>
-              <Text style={styles.quoteAuthor}>— {quote.a}</Text>
+              <Text style={[styles.weatherCity, { color: colors.text }]}>📍 {weather.city}</Text>
+              <Text style={[styles.weatherTemp, { color: colors.primary }]}>{weather.temperature}°C</Text>
+              <Text style={[styles.weatherDetail, { color: colors.textSecondary }]}>Wind: {weather.windspeed} km/h</Text>
             </>
           ) : null}
         </View>
@@ -143,13 +154,11 @@ export default function InsightsScreen() {
 const styles = StyleSheet.create({
   safeArea: { flex: 1, paddingHorizontal: 18, paddingTop: 10 },
   content: { paddingBottom: 32, paddingTop: 4 },
-  quoteCard: {
-    borderRadius: 14,
-    marginBottom: 16,
-    padding: 18,
-  },
-  quoteText: { color: '#FFFFFF', fontSize: 14, fontStyle: 'italic', lineHeight: 22 },
-  quoteAuthor: { color: 'rgba(255,255,255,0.75)', fontSize: 12, marginTop: 8 },
+  weatherCard: { borderRadius: 14, borderWidth: 1, marginBottom: 16, padding: 16 },
+  weatherTitle: { fontSize: 12, fontWeight: '600', marginBottom: 8 },
+  weatherCity: { fontSize: 16, fontWeight: '600' },
+  weatherTemp: { fontSize: 32, fontWeight: '800', marginTop: 4 },
+  weatherDetail: { fontSize: 13, marginTop: 4 },
   statsRow: {
     flexDirection: 'row',
     gap: 10,

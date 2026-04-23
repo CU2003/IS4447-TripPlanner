@@ -1,5 +1,6 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useState } from 'react';
+import { Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { eq } from 'drizzle-orm';
 import { db } from '@/db/client';
@@ -17,11 +18,21 @@ export default function TripDetailScreen() {
   const { trips: tripList, setTrips, activities, setActivities, categories } = useAppContext();
   const { colors } = useTheme();
 
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
+
   const trip = tripList.find((t) => t.id === Number(id));
   if (!trip) return null;
 
+  const normalized = searchQuery.trim().toLowerCase();
+
   const tripActivities = activities
-    .filter((a) => a.tripId === Number(id))
+    .filter((a) => {
+      if (a.tripId !== Number(id)) return false;
+      if (selectedCategoryId !== null && a.categoryId !== selectedCategoryId) return false;
+      if (normalized.length > 0 && !a.name.toLowerCase().includes(normalized)) return false;
+      return true;
+    })
     .sort((a, b) => b.date.localeCompare(a.date));
 
   const handleDelete = () => {
@@ -74,9 +85,41 @@ export default function TripDetailScreen() {
           <PrimaryButton label="Delete Trip" variant="danger" onPress={handleDelete} />
         </View>
 
-        {tripActivities.length > 0 && (
+        {activities.filter((a) => a.tripId === Number(id)).length > 0 && (
           <View style={styles.activitiesSection}>
             <Text style={[styles.sectionTitle, { color: colors.text }]}>Activities</Text>
+
+            <TextInput
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+              placeholder="Search activities…"
+              placeholderTextColor={colors.textSecondary}
+              accessibilityLabel="Search activities"
+              style={[styles.searchInput, { backgroundColor: colors.searchBg, borderColor: colors.searchBorder, color: colors.text }]}
+            />
+
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterRow} contentContainerStyle={styles.filterContent}>
+              <Pressable
+                accessibilityLabel="Show all categories"
+                accessibilityRole="button"
+                onPress={() => setSelectedCategoryId(null)}
+                style={[styles.filterPill, { backgroundColor: selectedCategoryId === null ? colors.primary : colors.card, borderColor: selectedCategoryId === null ? colors.primary : colors.border }]}
+              >
+                <Text style={[styles.filterText, { color: selectedCategoryId === null ? '#FFFFFF' : colors.text }]}>All</Text>
+              </Pressable>
+              {categories.map((cat) => (
+                <Pressable
+                  key={cat.id}
+                  accessibilityLabel={`Filter by ${cat.name}`}
+                  accessibilityRole="button"
+                  onPress={() => setSelectedCategoryId(cat.id === selectedCategoryId ? null : cat.id)}
+                  style={[styles.filterPill, { backgroundColor: selectedCategoryId === cat.id ? cat.color : colors.card, borderColor: selectedCategoryId === cat.id ? cat.color : colors.border }]}
+                >
+                  <Text style={[styles.filterText, { color: selectedCategoryId === cat.id ? '#FFFFFF' : colors.text }]}>{cat.name}</Text>
+                </Pressable>
+              ))}
+            </ScrollView>
+
             {tripActivities.map((a) => {
               const cat = categories.find((c) => c.id === a.categoryId);
               return (
@@ -126,6 +169,11 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     padding: 12,
   },
+  searchInput: { borderRadius: 10, borderWidth: 1, marginBottom: 10, paddingHorizontal: 12, paddingVertical: 10 },
+  filterRow: { marginBottom: 10 },
+  filterContent: { gap: 8, paddingBottom: 4 },
+  filterPill: { borderRadius: 999, borderWidth: 1, paddingHorizontal: 14, paddingVertical: 7 },
+  filterText: { fontSize: 13, fontWeight: '500' },
   dot: { borderRadius: 999, height: 10, marginRight: 10, width: 10 },
   activityInfo: { flex: 1 },
   activityRowPressed: { opacity: 0.88 },
